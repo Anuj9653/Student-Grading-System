@@ -80,7 +80,7 @@ Contributions are welcome! Feel free to submit a pull request or open an issue.
 
 ## 📬 Contact
 - **GitHub**: [Anuj9653](https://github.com/Anuj9653)
-- **Email**: anuj9653@example.com 
+- **Email**: anujgupta9653@gmail.com
 
 
 
