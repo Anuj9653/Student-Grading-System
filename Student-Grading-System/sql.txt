@@ -5,7 +5,8 @@ USE student_db;
 -- Create a table for storing student details
 CREATE TABLE IF NOT EXISTS students (
     usn VARCHAR(20) PRIMARY KEY,
-    sname VARCHAR(50) NOT NULL
+    sname VARCHAR(50) NOT NULL,
+    status ENUM('passed', 'failed') NOT NULL DEFAULT 'failed'
 );
 
 -- Create a table for storing subject details
@@ -31,16 +32,17 @@ CREATE TABLE IF NOT EXISTS marks (
         ON UPDATE CASCADE
 );
 
+-- Drop existing procedures if they exist
+DROP PROCEDURE IF EXISTS CountStudentsAndSubjects;
+DROP PROCEDURE IF EXISTS CountPassedAndFailed;
+
+DELIMITER $$
 
 -- Create a procedure to count the number of students and subjects
-DROP PROCEDURE IF EXISTS CountStudentsAndSubjects;
-
-DELIMITER //
-
 CREATE PROCEDURE CountStudentsAndSubjects()
 BEGIN
-    DECLARE studentCount INT;
-    DECLARE subjectCount INT;
+    DECLARE studentCount INT DEFAULT 0;
+    DECLARE subjectCount INT DEFAULT 0;
 
     -- Count the number of students
     SELECT COUNT(*) INTO studentCount FROM students;
@@ -48,7 +50,28 @@ BEGIN
     -- Count the number of subjects
     SELECT COUNT(*) INTO subjectCount FROM subjects;
 
-    -- Display the counts
-    SELECT CONCAT(studentCount) AS StudentCount, CONCAT(subjectCount) AS SubjectCount;
+    -- Return the counts
+    SELECT studentCount AS StudentCount, subjectCount AS SubjectCount;
+END $$
 
-END //
+-- Create a procedure to count passed and failed students
+CREATE PROCEDURE CountPassedAndFailed()
+BEGIN
+    DECLARE passedCount INT DEFAULT 0;
+    DECLARE failedCount INT DEFAULT 0;
+
+    -- Count passed students
+    SELECT COUNT(*) INTO passedCount FROM students WHERE status = 'passed';
+
+    -- Count failed students
+    SELECT COUNT(*) INTO failedCount FROM students WHERE status = 'failed';
+
+    -- Return the counts
+    SELECT passedCount AS PassedCount, failedCount AS FailedCount;
+END $$
+
+DELIMITER ;
+
+-- Example: Call procedures
+-- CALL CountStudentsAndSubjects();
+-- CALL CountPassedAndFailed();
